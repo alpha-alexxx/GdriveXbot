@@ -1,14 +1,51 @@
-class config:
-    BOT_TOKEN = ""
-    APP_ID = ""
-    API_HASH = ""
-    DATABASE_URL = ""
-    SUDO_USERS = "" # Sepearted by space.
-    DOWNLOAD_DIRECTORY = "./downloads/"
-    G_DRIVE_CLIENT_ID = ""
-    G_DRIVE_CLIENT_SECRET = ""
-    SUPPORT_CHAT_LINK = ""
+import os
+from dotenv import load_dotenv
 
+# Load .env file automatically
+load_dotenv()
+
+class config:
+    """
+    Configuration class that loads sensitive data from environment variables.
+    No hardcoded secrets are stored here.
+    """
+
+    BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+    APP_ID = os.getenv("APP_ID", "")
+    API_HASH = os.getenv("API_HASH", "")
+    DATABASE_URL = os.getenv("DATABASE_URL", "")
+    SUDO_USERS = [int(x) for x in os.getenv("SUDO_USERS", "").split()] if os.getenv("SUDO_USERS") else []
+    DOWNLOAD_DIRECTORY = os.getenv("DOWNLOAD_DIRECTORY", "./downloads/")
+    G_DRIVE_CLIENT_ID = os.getenv("G_DRIVE_CLIENT_ID", "")
+    G_DRIVE_CLIENT_SECRET = os.getenv("G_DRIVE_CLIENT_SECRET", "")
+    SUPPORT_CHAT_LINK = os.getenv("SUPPORT_CHAT_LINK", "")
+
+    @staticmethod
+    def check_envs():
+        """
+        Checks for missing critical environment variables and prints
+        user-friendly console messages.
+        """
+        required_vars = [
+            "BOT_TOKEN",
+            "APP_ID",
+            "API_HASH",
+            "DATABASE_URL",
+            "G_DRIVE_CLIENT_ID",
+            "G_DRIVE_CLIENT_SECRET",
+        ]
+        missing = [var for var in required_vars if not os.getenv(var)]
+
+        if missing:
+            print("⚠️  Missing Required Environment Variables:")
+            for var in missing:
+                print(f"   → {var}")
+            print("\n💡 Tip: Check your `.env` file or hosting configuration.")
+        else:
+            print("✅ All environment variables loaded successfully!\n")
+
+# Optional: Automatically run the environment check on import
+config.check_envs()
 
 class BotCommands:
   Download = ['download', 'dl']
